@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-echo "Starting WPFactory Product Updater action"
+echo "=== WPFactory Product Updater Action ==="
 
-# Inputs (GitHub Actions format)
+# Inputs
 API_URL="$INPUT_API_URL"
 PRODUCT_ID="$INPUT_PRODUCT_ID"
 PRODUCT_FILENAME="$INPUT_PRODUCT_FILENAME"
@@ -14,70 +14,73 @@ TOKEN_HEADER_KEY="$INPUT_TOKEN_HEADER_KEY"
 REPO="$GITHUB_REPOSITORY"
 TAG="$GITHUB_REF_NAME"
 
-FILENAME_FULL="${PRODUCT_FILENAME}.zip"
+ZIP_NAME="${PRODUCT_FILENAME}.zip"
 
-echo "Repository: $REPO"
+echo "Repo: $REPO"
 echo "Tag: $TAG"
-echo "Final filename: $FILENAME_FULL"
+echo "Zip: $ZIP_NAME"
 
-# -----------------------------
+# --------------------------------------
 # Download tag zip from GitHub
-# -----------------------------
-echo "Downloading tag $TAG from $REPO"
+# --------------------------------------
+echo "Downloading tag archive..."
 
-GITHUB_RESPONSE=$(eval "curl -vLJ \
-  -H 'Authorization: token $API_TOKEN' \
-  'https://api.github.com/repos/$REPO/zipball/$TAG' \
-  --output '$FILENAME_FULL'")
+curl -vLJ \
+  -H "Authorization: token $API_TOKEN" \
+  "https://api.github.com/repos/$REPO/zipball/$TAG" \
+  -o "$ZIP_NAME"
 
-# -----------------------------
+# --------------------------------------
 # Validate zip
-# -----------------------------
-echo "Validating zip file"
+# --------------------------------------
+echo "Validating zip..."
 
-ls -lh "$FILENAME_FULL"
+ls -lh "$ZIP_NAME"
 
-if ! file "$FILENAME_FULL" | grep -q "Zip archive"; then
-  echo "Error: downloaded file is not a zip"
+if ! file "$ZIP_NAME" | grep -q "Zip archive"; then
+  echo "ERROR: Downloaded file is not a zip"
+  echo "File contents:"
+  cat "$ZIP_NAME"
   exit 1
 fi
 
-# -----------------------------
+# --------------------------------------
 # Unzip and normalize structure
-# -----------------------------
-unzip -q "$FILENAME_FULL" || exit 1
-rm "$FILENAME_FULL"
+# --------------------------------------
+echo "Unzipping..."
+unzip -q "$ZIP_NAME"
+rm "$ZIP_NAME"
 
-FOLDERS_COUNT=$(ls -d */ | wc -l | tr -d ' ')
-if [ "$FOLDERS_COUNT" -ne 1 ]; then
-  echo "Error: expected exactly one root folder, got $FOLDERS_COUNT"
+FOLDER_COUNT=$(ls -d */ | wc -l | tr -d ' ')
+if [ "$FOLDER_COUNT" -ne 1 ]; then
+  echo "ERROR: Expected exactly one root folder, got $FOLDER_COUNT"
   exit 1
 fi
 
 ROOT_DIR=$(ls -d */)
-ROOT_DIR=${ROOT_DIR%/}
+ROOT_DIR="${ROOT_DIR%/}"
 
-echo "Renaming root folder $ROOT_DIR to $PRODUCT_FILENAME"
+echo "Renaming root folder '$ROOT_DIR' → '$PRODUCT_FILENAME'"
 mv "$ROOT_DIR" "$PRODUCT_FILENAME"
 
-# -----------------------------
-# Repack zip
-# -----------------------------
-zip -qr "$FILENAME_FULL" "$PRODUCT_FILENAME"
+# --------------------------------------
+# Rebuild zip
+# --------------------------------------
+echo "Rebuilding zip..."
+zip -qr "$ZIP_NAME" "$PRODUCT_FILENAME"
 
-echo "Zip rebuilt successfully:"
-ls -lh "$FILENAME_FULL"
+ls -lh "$ZIP_NAME"
 
-# -----------------------------
+# --------------------------------------
 # Upload to WP REST API
-# -----------------------------
+# --------------------------------------
 UPLOAD_URL="${API_URL}?product_id=${PRODUCT_ID}"
 
-echo "Uploading to $UPLOAD_URL"
+echo "Uploading to: $UPLOAD_URL"
 
 curl -f \
   -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
-  -F "file=@${FILENAME_FULL}" \
+  -F "file=@${ZIP_NAME}" \
   "$UPLOAD_URL"
 
-echo "Upload completed successfully"
+echo "✅ Upload finished successfully"
