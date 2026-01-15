@@ -21,6 +21,9 @@ inputs:
   api_token:
     description: API token for authentication
     required: true
+  github_token:
+    description: GitHub token used to download the tag zip
+    required: true
 
 runs:
   using: docker

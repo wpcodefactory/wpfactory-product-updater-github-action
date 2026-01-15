@@ -11,6 +11,7 @@ PRODUCT_ID="$INPUT_PRODUCT_ID"
 PRODUCT_FILENAME="$INPUT_PRODUCT_FILENAME"
 API_TOKEN="$INPUT_API_TOKEN"
 TOKEN_HEADER_KEY="$INPUT_TOKEN_HEADER_KEY"
+GITHUB_TOKEN="$INPUT_GITHUB_TOKEN"
 
 # -----------------------------
 # GitHub context
@@ -25,12 +26,12 @@ echo "Tag: $TAG"
 echo "Zip name: $ZIP_NAME"
 
 # -----------------------------
-# Download tag archive
+# Download tag archive from GitHub API
 # -----------------------------
-echo "Downloading tag archive..."
-
-curl -fL \
-  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
+echo "Downloading tag archive from GitHub API..."
+curl -fLJ \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  "https://api.github.com/repos/$REPO/zipball/$TAG" \
   -o "$ZIP_NAME"
 
 # -----------------------------
