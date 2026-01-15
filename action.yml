@@ -4,7 +4,8 @@ description: Uploads a product file to WPFactory Product Updater REST API
 inputs:
   api_url:
     description: API URL (wp-json/wpfactory-product-updater/v1/update-product-file)
-    required: true
+    default: https://wpfactory.com/wp-json/wpfactory-product-updater/v1/update-product-file
+    required: false
   product_id:
     description: WooCommerce product ID
     required: true
