@@ -25,9 +25,8 @@ echo "Zip: $ZIP_NAME"
 # --------------------------------------
 echo "Downloading tag archive..."
 
-curl -vLJ \
-  -H "Authorization: token $API_TOKEN" \
-  "https://api.github.com/repos/$REPO/zipball/$TAG" \
+curl -fL \
+  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
   -o "$ZIP_NAME"
 
 # --------------------------------------
