@@ -1,0 +1,27 @@
+name: WPFactory Product Updater
+description: Uploads a product file to WPFactory Product Updater REST API
+
+inputs:
+  api_url:
+    description: API URL (wp-json/wpfactory-product-updater/v1/update-product-file)
+    required: true
+  product_id:
+    description: WooCommerce product ID
+    required: true
+  file:
+    description: Path to file to upload
+    required: true
+  product_filename:
+    description: Product filename
+    required: true
+  token_header_key:
+    description: HTTP header key used for API token
+    default: x-wpfactory-product-updater-token
+    required: false
+  api_token:
+    description: API token for authentication
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
