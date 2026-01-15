@@ -84,6 +84,8 @@ UPLOAD_URL="${API_URL}?product_id=${PRODUCT_ID}"
 
 echo "Uploading to: $UPLOAD_URL"
 
+echo "echo: $TOKEN_HEADER_KEY"
+
 curl -f \
   -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
   -F "file=@${ZIP_NAME}" \
