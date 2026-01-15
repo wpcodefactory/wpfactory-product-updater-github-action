@@ -80,15 +80,12 @@ unzip -l "$ZIP_NAME"
 # -----------------------------
 # Upload to WP REST API
 # -----------------------------
-UPLOAD_URL="${API_URL}?product_id=${PRODUCT_ID}"
-
-echo "Uploading to: $UPLOAD_URL"
-
-echo "echo: $TOKEN_HEADER_KEY"
+echo "Uploading to WP REST API: $API_URL"
 
 curl -f \
   -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
   -F "file=@${ZIP_NAME}" \
-  "$UPLOAD_URL"
+  -F "product_id=${PRODUCT_ID}" \
+  "$API_URL"
 
 echo "✅ Upload finished successfully"
