@@ -3,9 +3,6 @@ set -e
 
 echo "=== WPFactory Product Updater Action ==="
 
-# Token
-TOKEN=$INPUT_GITHUB_TOKEN
-
 # -----------------------------
 # Inputs
 # -----------------------------
@@ -32,20 +29,40 @@ echo "Zip name: $ZIP_NAME"
 # -----------------------------
 echo "Downloading tag archive..."
 
-#curl -fL \
-#  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
-#  -o "$ZIP_NAME"
+curl -fL \
+  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
+  -o "$ZIP_NAME"
 
-# Downloads the tag
-GITHUB_RESPONSE=$(eval "curl -vLJ -H 'Authorization: token $TOKEN' 'https://api.github.com/repos/$REPO/zipball/$TAG' --output '$ZIP_NAME'")
+# -----------------------------
+# Inspect downloaded zip
+# -----------------------------
+echo "Downloaded zip file:"
+ls -lh "$ZIP_NAME"
 
-# Renames zip archive folder
-unzip $ZIP_NAME
-rm $ZIP_NAME
-cd */
-mv ../{"${PWD##*/}",${PRODUCT_FILENAME}}
-cd ..
-zip -r $ZIP_NAME .
+echo "Zip contents (before processing):"
+unzip -l "$ZIP_NAME"
+
+echo "Validating zip..."
+unzip -tq "$ZIP_NAME" >/dev/null
+
+# -----------------------------
+# Unzip and normalize structure
+# -----------------------------
+echo "Unzipping..."
+unzip -q "$ZIP_NAME"
+rm "$ZIP_NAME"
+
+FOLDER_COUNT=$(ls -d */ | wc -l | tr -d ' ')
+if [ "$FOLDER_COUNT" -ne 1 ]; then
+  echo "ERROR: Expected exactly one root folder, got $FOLDER_COUNT"
+  exit 1
+fi
+
+ROOT_DIR=$(ls -d */)
+ROOT_DIR="${ROOT_DIR%/}"
+
+echo "Renaming root folder '$ROOT_DIR' → '$PRODUCT_FILENAME'"
+mv "$ROOT_DIR" "$PRODUCT_FILENAME"
 
 # -----------------------------
 # Rebuild zip
