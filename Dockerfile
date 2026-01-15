@@ -4,7 +4,6 @@ RUN apk add --no-cache \
   curl \
   unzip \
   zip \
-  file \
   bash
 
 COPY entrypoint.sh /entrypoint.sh
