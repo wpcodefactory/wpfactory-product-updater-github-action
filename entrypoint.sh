@@ -33,6 +33,9 @@ echo "Downloading tag archive..."
 #  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
 #  -o "$ZIP_NAME"
 
+# Downloads the tag
+GITHUB_RESPONSE=$(eval "curl -vLJ -H 'Authorization: token $TOKEN' 'https://api.github.com/repos/$REPO/zipball/$TAG' --output '$ZIP_NAME'")
+
 # -----------------------------
 # Inspect downloaded zip
 # -----------------------------
