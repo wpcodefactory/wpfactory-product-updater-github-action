@@ -29,9 +29,9 @@ echo "Zip name: $ZIP_NAME"
 # -----------------------------
 echo "Downloading tag archive..."
 
-curl -fL \
-  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
-  -o "$ZIP_NAME"
+#curl -fL \
+#  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
+#  -o "$ZIP_NAME"
 
 # -----------------------------
 # Inspect downloaded zip
