@@ -3,6 +3,9 @@ set -e
 
 echo "=== WPFactory Product Updater Action ==="
 
+# Token
+TOKEN=$INPUT_GITHUB_TOKEN
+
 # -----------------------------
 # Inputs
 # -----------------------------
@@ -27,7 +30,7 @@ echo "Zip name: $ZIP_NAME"
 # -----------------------------
 # Download tag archive
 # -----------------------------
-echo "Downloading tag archive... 2"
+echo "Downloading tag archive..."
 
 #curl -fL \
 #  "https://github.com/$REPO/archive/refs/tags/$TAG.zip" \
