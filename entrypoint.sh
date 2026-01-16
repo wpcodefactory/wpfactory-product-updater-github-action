@@ -82,7 +82,9 @@ ls -lh "$ZIP_NAME"
 # -----------------------------
 echo "Uploading to WP REST API: $API_URL"
 
-RESPONSE=$(curl -s -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
+RESPONSE=$(curl -sS -A "Mozilla/5.0 (GitHub-Action)" \
+  -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
+  -H "Accept: application/json" \
   -F "file=@${ZIP_NAME}" \
   -F "product_id=${PRODUCT_ID}" \
   "$API_URL")
