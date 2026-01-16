@@ -74,18 +74,18 @@ zip -qr "$ZIP_NAME" "$PRODUCT_FILENAME"
 echo "Final zip file:"
 ls -lh "$ZIP_NAME"
 
-echo "Zip contents (final):"
-unzip -l "$ZIP_NAME"
+#echo "Zip contents (final):"
+#unzip -l "$ZIP_NAME"
 
 # -----------------------------
 # Upload to WP REST API
 # -----------------------------
 echo "Uploading to WP REST API: $API_URL"
 
-curl -f \
-  -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
+RESPONSE=$(curl -s -H "${TOKEN_HEADER_KEY}: ${API_TOKEN}" \
   -F "file=@${ZIP_NAME}" \
   -F "product_id=${PRODUCT_ID}" \
-  "$API_URL"
+  "$API_URL")
 
-echo "✅ Upload finished successfully"
+# **Set GitHub Action output**
+echo "response=$RESPONSE" >> $GITHUB_OUTPUT

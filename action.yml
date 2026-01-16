@@ -26,6 +26,10 @@ inputs:
     description: GitHub token used to download the tag zip
     required: true
 
+outputs:
+  response:
+    description: Response from WPFactory REST API
+
 runs:
   using: docker
   image: Dockerfile
